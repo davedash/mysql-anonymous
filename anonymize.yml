@@ -1,6 +1,4 @@
 database:
-    host: cm-webdev01
-    name: d_remora2
     truncate:
         - addonlogs
         - api_auth_tokens
