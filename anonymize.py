@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # This assumes an id on each field.
 import logging
 
@@ -44,9 +45,7 @@ def get_updates(config):
                     updates.append("%s = ROUND(RAND()*1000000)" % field)
             elif operation == 'random_ip':
                 for field in listify(details):
-                    updates.append("%s = CONCAT_WS('.', ROUND(RAND()*255), "
-                                   "ROUND(RAND()*255), ROUND(RAND()*255), "
-                                   "ROUND(RAND()*255))" % field)
+                    updates.append("%s = INET_NTOA(RAND()*1000000000)" % field)
             elif operation == 'random_email':
                 for field in listify(details):
                     updates.append("%s = CONCAT(id, '@mozilla.com')"
@@ -74,8 +73,9 @@ def anonymize(config):
     print 'SET FOREIGN_KEY_CHECKS=1;'
 
 
-
 if __name__ == '__main__':
     import yaml
-    cfg = yaml.load(open('anonymize.yml'))
+    import sys
+    f = sys.argv[1] if len(sys.argv) > 1 else 'anonymize.yml'
+    cfg = yaml.load(open(f))
     anonymize(cfg)

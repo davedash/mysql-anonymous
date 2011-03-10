@@ -1,3 +1,6 @@
+--- This is a sample anonymize.yml file that's used for the Firefox Add-ons
+--- database.
+
 database:
     truncate:
         - addonlogs
@@ -69,6 +72,8 @@ database:
         config:
             delete:
                 value: "emailchange_secret"
+        reviews:
+            random_ip: ip_address
         users:
             random_email: email
             nullify:
