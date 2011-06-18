@@ -1,0 +1,115 @@
+# Anonymization rules for MDN wiki_mdc_deki
+
+databases:
+
+    lmo_wiki_mdc_deki:
+
+        truncate:
+            - objectcache
+            - querycache
+            - requestlog
+            - requeststats
+    
+        tables:
+            attachments_backup:
+                hash_value: 
+                    - at_user_text
+                    - at_removed_by_text
+            logins:
+                random_ip:
+                    - login_ip_address
+            users:
+                hash_value:
+                    - user_name
+                    - user_real_name
+                hash_email:
+                    - user_email
+                nullify:
+                    - user_password
+                    - user_newpassword
+                    - user_token
+                    - user_external_name
+
+    lmo_developer_mozilla_org_django:
+        
+        truncate:
+            - auth_message
+            - django_admin_log
+            - django_session
+            - threadedcomments_freethreadedcomment
+            - threadedcomments_testmodel
+        
+        tables:
+            actioncounters_actioncounterunique:
+                random_ip:
+                    - ip
+                nullify:
+                    - user_agent
+                    - session_key
+            auth_user:
+                hash_value:
+                    - username
+                random_email:
+                    - email
+                random_int:
+                    - first_name
+                    - last_name
+                nullify:
+                    - password
+            contentflagging_contentflag:
+                random_ip:
+                    - ip
+                nullify:
+                    - user_agent
+                    - session_key
+            user_profiles:
+                random_int:
+                    - location
+                    - homepage
+    
+    lmo_developer_mozilla_org_phpbb:
+        
+        truncate:
+            - phpbb_sessions
+            - phpbb_sessions_keys
+        
+        tables:
+            phpbb_banlist:
+                nullify:
+                    - ban_ip
+            phpbb_log:
+                random_ip:
+                    - log_ip
+            phpbb_moderator_cache:
+                hash_value:
+                    - username
+            phpbb_posts:
+                nullify:
+                    - post_username
+                random_ip:
+                    - poster_ip
+            phpbb_privmsgs:
+                random_ip:
+                    - author_ip
+            phpbb_profile_fields_data:
+                hash_value:
+                    - pf_irc_nickname
+            phpbb_topics:
+                hash_value:
+                    - topic_first_poster_name
+                    - topic_last_poster_name
+            phpbb_users:
+                hash_value:
+                    - username
+                    - username_clean
+                hash_email:
+                    - user_email
+                nullify:
+                    - user_ip
+                    - user_password
+                    - user_passchg
+                    - user_email_hash
+                    - user_last_confirm_key
+                    - user_lastpage
+                    - user_form_salt
+

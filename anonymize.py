@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # This assumes an id on each field.
 import logging
+import hashlib
+import random
 
 
 log = logging.getLogger('anonymize')
+common_hash_secret = "%016x" % (random.getrandbits(128))
 
 
 def get_truncates(config):
@@ -31,6 +34,8 @@ def get_deletes(config):
 listify = lambda x: x if isinstance(x, list) else [x]
 
 def get_updates(config):
+    global common_hash_secret
+
     database = config.get('database', {})
     tables = database.get('tables', [])
     sql = []
@@ -53,6 +58,14 @@ def get_updates(config):
             elif operation == 'random_username':
                 for field in listify(details):
                     updates.append("%s = CONCAT('_user_', id)" % field)
+            elif operation == 'hash_value':
+                for field in listify(details):
+                    updates.append("%(field)s = MD5(CONCAT(@common_hash_secret, %(field)s))"
+                                   % dict(field=field))
+            elif operation == 'hash_email':
+                for field in listify(details):
+                    updates.append("%(field)s = CONCAT(MD5(CONCAT(@common_hash_secret, %(field)s)), '@mozilla.com')"
+                                   % dict(field=field))
             elif operation == 'delete':
                 continue
             else:
@@ -63,19 +76,44 @@ def get_updates(config):
 
 
 def anonymize(config):
+    database = config.get('database', {})
+    
+    if 'name' in database:
+         print "USE %s;" % database['name']
+
+    print "SET FOREIGN_KEY_CHECKS=0;"
+    
     sql = []
     sql.extend(get_truncates(config))
     sql.extend(get_deletes(config))
     sql.extend(get_updates(config))
-    print 'SET FOREIGN_KEY_CHECKS=0;'
     for stmt in sql:
         print stmt + ';'
-    print 'SET FOREIGN_KEY_CHECKS=1;'
 
+    print "SET FOREIGN_KEY_CHECKS=1;"
+    print
 
 if __name__ == '__main__':
+    
     import yaml
     import sys
-    f = sys.argv[1] if len(sys.argv) > 1 else 'anonymize.yml'
-    cfg = yaml.load(open(f))
-    anonymize(cfg)
+
+    if len(sys.argv) > 1:
+        files = sys.argv[1:]
+    else:
+        files = [ 'anonymize.yml' ]
+
+    for f in files:
+        print "--"
+        print "-- %s" %f
+        print "--"
+        print "SET @common_hash_secret=rand();"
+        print ""
+        cfg = yaml.load(open(f))
+        if 'databases' not in cfg:
+            anonymize(cfg)
+        else:
+            databases = cfg.get('databases')
+            for name, sub_cfg in databases.items():
+                print "USE %s;" % name
+                anonymize({'database': sub_cfg})
