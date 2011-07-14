@@ -21,5 +21,89 @@ developing.  This script can do a few things (see `anonymize.yml`):
 
 ### Usage
 
-    python anonymize.py > anon.sql
-    cat anon.sql | mysql
+* `python anonymize.py > anon.sql`
+    * Looks for `anonymize.yml` in current working directory by default, produces anonymizing SQL on STDOUT.
+
+* `python anonymize.py db1.yml db2.yml db3.yml > anon.sql`
+    * Reads `db1.yml`, `db2.yml`, and `db3.yml` from current working directory, produces anonymizing SQL on STDOUT.
+
+### YAML structure
+
+#### Single database
+
+Here's a commented example of a YAML file usable with `anonymize.py` to operate
+upon a single database:
+
+    database:
+        
+        # Delete all content from the tables named in the list below
+        truncate:
+            - list_of_table_names
+            - from_which
+            - to_remove_all_content
+        
+        tables:
+
+            # Multiple tables can be named, with anonymizing handlers listed within
+            table_name_1:
+                nullify: [ more_columns, listed_here ]
+
+            table_name_2:
+                
+                delete:
+                    # Delete any rows where the column "column_name" contains 0
+                    column_name: 0
+
+                # Change the named columns to NULL values
+                nullify: [ column_names, to_blank_out ]
+                
+                # Fill the named columns with random integers
+                random_int: [ columns, to_fill, with_random_numbers ]
+                
+                # Fill the named columns with random IP-address values
+                random_ip: [ columns_to_fill, with_random_ip_addresses ]
+                
+                # Fill the named columns with random email-like values
+                random_email: [ list, of, column, names ]
+                
+                # Fill the named columns with random alpha-numeric values
+                random_username: [ list, of, column, names ]
+                
+                # For the hash_* handlers, column values are hashed along with
+                # a random "secret" chosen at the start of the SQL. This
+                # "secret" is never revealed, and helps scramble values
+                # consistently across databases.
+                #
+                # This can be handy for identifiers shared across databases
+                # that are sharded or belong to different applications that have
+                # to integrate in some way
+
+                # MD5 hash of column value with the secret 
+                hash_value: [ even, more, names ]
+
+                # MD5 hash of column value + @mozilla.com 
+                hash_email: [ still, more_column, names ]
+
+#### Multiple databases
+
+You can specify multiple databases to be included in one anonymizing SQL
+output. The `USE {table name}` command will be included before each database's
+stream of commands, though one random hash "secret" will be shared between
+them.
+
+    databases:
+        
+        name_of_database_1:
+            truncate:
+                - tables
+                - to_truncate
+            table_name_1:
+                nullify: [ columns_to, nullify_values ]
+        
+        name_of_database_2:
+            truncate:
+                - tables
+                - to_truncate
+            table_name_1:
+                random_int: [ columns_to, nullify_values ]
+
