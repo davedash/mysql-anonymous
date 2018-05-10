@@ -19,7 +19,8 @@ def get_truncates(config):
 
 def get_deletes(config):
     database = config.get('database', {})
-    tables = database.get('tables', [])
+    tables = database.get('tables', {})
+
     sql = []
     for table, data in tables.iteritems():
         if 'delete' in data:
