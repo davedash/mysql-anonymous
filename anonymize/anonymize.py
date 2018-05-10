@@ -77,7 +77,6 @@ def get_updates(config):
 
 def anonymize(config):
     database = config.get('database', {})
-
     if 'name' in database:
         print "USE `%s`;" % database['name']
 

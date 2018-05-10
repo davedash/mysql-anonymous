@@ -2,7 +2,7 @@ PIP=.venv/bin/pip
 PYTEST=.venv/bin/pytest
 
 test:clean
-	PYTHONPATH=. ${PYTEST} -s -v tests/${path}
+	PYTHONPATH=anonymize ${PYTEST} -s -v tests/${path}
 
 venv:
 	virtualenv .venv
