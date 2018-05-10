@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # This assumes an id on each field.
 import logging
-import hashlib
 import random
 
 
@@ -32,6 +31,7 @@ def get_deletes(config):
     return sql
 
 listify = lambda x: x if isinstance(x, list) else [x]
+
 
 def get_updates(config):
     global common_hash_secret
@@ -64,8 +64,8 @@ def get_updates(config):
                                    % dict(field=field))
             elif operation == 'hash_email':
                 for field in listify(details):
-                    updates.append("`%(field)s` = CONCAT(MD5(CONCAT(@common_hash_secret, `%(field)s`)), '@mozilla.com')"
-                                   % dict(field=field))
+                    QUERY = "`%(field)s` = CONCAT(MD5(CONCAT(@common_hash_secret, `%(field)s`)), '@mozilla.com')"
+                    updates.append(QUERY % dict(field=field))
             elif operation == 'delete':
                 continue
             else:
@@ -79,7 +79,7 @@ def anonymize(config):
     database = config.get('database', {})
 
     if 'name' in database:
-         print "USE `%s`;" % database['name']
+        print "USE `%s`;" % database['name']
 
     print "SET FOREIGN_KEY_CHECKS=0;"
 
@@ -101,11 +101,11 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         files = sys.argv[1:]
     else:
-        files = [ 'anonymize.yml' ]
+        files = ['anonymize.yml', ]
 
     for f in files:
         print "--"
-        print "-- %s" %f
+        print "-- %s" % f
         print "--"
         print "SET @common_hash_secret=rand();"
         print ""
