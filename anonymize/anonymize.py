@@ -13,7 +13,7 @@ def get_truncates(config):
     truncates = database.get('truncate', [])
     sql = []
     for truncate in truncates:
-        sql.append('TRUNCATE `%s`' % truncate)
+        sql.append('TRUNCATE `{}`'.format(truncate))
     return sql
 
 
