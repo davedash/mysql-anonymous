@@ -43,6 +43,8 @@ def get_updates(config):
     for table, data in tables.iteritems():
         updates = []
         for operation, details in data.iteritems():
+
+            # tables columns
             if operation == 'nullify':
                 for field in listify(details):
                     updates.append("`%s` = NULL" % field)
@@ -54,8 +56,7 @@ def get_updates(config):
                     updates.append("`%s` = INET_NTOA(RAND()*1000000000)" % field)
             elif operation == 'random_email':
                 for field in listify(details):
-                    updates.append("`%s` = CONCAT(id, '@example.com')"
-                                   % field)
+                    updates.append("`%s` = CONCAT(id, '@example.com')" % field)
             elif operation == 'random_username':
                 for field in listify(details):
                     updates.append("`%s` = CONCAT('_user_', id)" % field)
