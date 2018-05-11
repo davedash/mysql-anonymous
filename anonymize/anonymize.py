@@ -1,125 +1,115 @@
 #!/usr/bin/env python
-# This assumes an id on each field.
+from __future__ import print_function
+import itertools
 import logging
 import random
-import yaml
-import sys
 
 
 log = logging.getLogger('anonymize')
 common_hash_secret = "%016x" % (random.getrandbits(128))
 
-
-def get_truncates(config):
-    database = config.get('database', {})
-    truncates = database.get('truncate', [])
-    sql = []
-    for truncate in truncates:
-        sql.append('TRUNCATE `{}`'.format(truncate))
-    return sql
-
-
-def get_deletes(config):
-    database = config.get('database', {})
-    tables = database.get('tables', {})
-
-    sql = []
-    for table, data in tables.iteritems():
-        if 'delete' in data:
-            fields = []
-            for f, v in data['delete'].iteritems():
-                fields.append('`%s` = "%s"' % (f, v))
-            statement = 'DELETE FROM `%s` WHERE ' % table + ' AND '.join(fields)
-            sql.append(statement)
-    return sql
-
 listify = lambda x: x if isinstance(x, list) else [x]
 
 
-def get_updates(config):
-    global common_hash_secret
+class AnonymizeBaseAction(list):
 
-    database = config.get('database', {})
-    tables = database.get('tables', [])
-    sql = []
-    for table, data in tables.iteritems():
-        updates = []
-        for operation, details in data.iteritems():
-
-            # tables columns
-            if operation == 'nullify':
-                for field in listify(details):
-                    updates.append("`%s` = NULL" % field)
-            elif operation == 'random_int':
-                for field in listify(details):
-                    updates.append("`%s` = ROUND(RAND()*1000000)" % field)
-            elif operation == 'random_ip':
-                for field in listify(details):
-                    updates.append("`%s` = INET_NTOA(RAND()*1000000000)" % field)
-            elif operation == 'random_email':
-                for field in listify(details):
-                    updates.append("`%s` = CONCAT(id, '@example.com')" % field)
-            elif operation == 'random_username':
-                for field in listify(details):
-                    updates.append("`%s` = CONCAT('_user_', id)" % field)
-            elif operation == 'hash_value':
-                for field in listify(details):
-                    updates.append("`%(field)s` = MD5(CONCAT(@common_hash_secret, `%(field)s`))"
-                                   % dict(field=field))
-            elif operation == 'hash_email':
-                for field in listify(details):
-                    QUERY = "`%(field)s` = CONCAT(MD5(CONCAT(@common_hash_secret, `%(field)s`)), '@example.com')"
-                    updates.append(QUERY % dict(field=field))
-            elif operation == 'delete':
-                continue
-            else:
-                log.warning('Unknown operation.')
-        if updates:
-            sql.append('UPDATE `%s` SET %s' % (table, ', '.join(updates)))
-    return sql
+    def __init__(self, scheme):
+        self._scheme = scheme
+        self.create()
 
 
-def anonymize(config):
-    database = config.get('database', {})
-    if 'name' in database:
-        print "USE `%s`;" % database['name']
+class AnonymizeTruncate(AnonymizeBaseAction):
 
-    print "SET FOREIGN_KEY_CHECKS=0;"
+    def create(self):
+        for truncate in self._scheme.database.get("truncate", []):
+            self.append('TRUNCATE `{}`'.format(truncate))
 
-    sql = []
-    sql.extend(get_truncates(config))
-    sql.extend(get_deletes(config))
-    sql.extend(get_updates(config))
-    for stmt in sql:
-        print stmt + ';'
 
-    print "SET FOREIGN_KEY_CHECKS=1;"
-    print
+class AnonymizeDelete(AnonymizeBaseAction):
 
-if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        files = sys.argv[1:]
-    else:
-        files = ['sample.yml', ]
+    def create(self):
+        for table, data in self._scheme.tables.iteritems():
+            if 'delete' in data:
+                self.append('DELETE FROM `{}` WHERE '.format(table) + ' AND '.join(
+                    ['`{}` = "{}"'.format(f, v) for f, v in data['delete'].iteritems()]
+                ))
 
-    for f in files:
-        print "--"
-        print "-- %s" % f
-        print "--"
-        print "SET @common_hash_secret=rand();"
-        print ""
-        cfg = yaml.load(open(f))
-        if 'databases' not in cfg:
-            anonymize(cfg)
-        else:
-            databases = cfg.get('databases')
-            for name, sub_cfg in databases.items():
-                print "USE `%s`;" % name
-                anonymize({'database': sub_cfg})
+
+class AnonymizeUpdate(AnonymizeBaseAction):
+
+    def create(self):
+        global common_hash_secret
+
+        for table, data in self._scheme.tables.iteritems():
+            updates = []
+            for operation, details in data.iteritems():
+
+                # tables columns
+                if operation == 'nullify':
+                    for field in listify(details):
+                        updates.append("`%s` = NULL" % field)
+                elif operation == 'random_int':
+                    for field in listify(details):
+                        updates.append("`%s` = ROUND(RAND()*1000000)" % field)
+                elif operation == 'random_ip':
+                    for field in listify(details):
+                        updates.append("`%s` = INET_NTOA(RAND()*1000000000)" % field)
+                elif operation == 'random_email':
+                    for field in listify(details):
+                        updates.append("`%s` = CONCAT(id, '@example.com')" % field)
+                elif operation == 'random_username':
+                    for field in listify(details):
+                        updates.append("`%s` = CONCAT('_user_', id)" % field)
+                elif operation == 'hash_value':
+                    for field in listify(details):
+                        updates.append("`%(field)s` = MD5(CONCAT(@common_hash_secret, `%(field)s`))"
+                                       % dict(field=field))
+                elif operation == 'hash_email':
+                    for field in listify(details):
+                        QUERY = "`%(field)s` = CONCAT(MD5(CONCAT(@common_hash_secret, `%(field)s`)), '@example.com')"
+                        updates.append(QUERY % dict(field=field))
+                elif operation == 'delete':
+                    continue
+                else:
+                    log.warning('Unknown operation.')
+            if updates:
+                self.append('UPDATE `%s` SET %s' % (table, ', '.join(updates)))
 
 
 class AnonymizeScheme(object):
-    pass
+
+    def __init__(self, name, cfg):
+        self._name = name
+        self._cfg = cfg
+
+    def create(self):
+        if self._print_use():
+            print("USE `{}`".format(self.name))
+        print("SET FOREIGN_KEY_CHECKS=0;")
+
+        for action in self._actions():
+            print("{};".format(action))
+        print("SET FOREIGN_KEY_CHECKS=1;")
+        print()
+
+    @property
+    def database(self):
+        return self._cfg
+
+    @property
+    def tables(self):
+        return self.database.get("tables", {})
+
+    def _print_use(self):
+        return "name" in self.database
+
+    @property
+    def name(self):
+        return self.database['name'] or self._name
+
+    def _actions(self):
+        return itertools.chain(
+            AnonymizeTruncate(self), AnonymizeDelete(self), AnonymizeUpdate(self))
 
 
 class AnonymizeSchemes(object):
@@ -129,9 +119,13 @@ class AnonymizeSchemes(object):
         self._print_use = False
 
     def build(self):
+        print("--")
+        print("SET @common_hash_secret=rand();")
+        print("")
+
         for name, cfg in self._databases().items():
             if self._print_use:
-                print "USE `{}`;".format(name)
+                print("USE `{}`;".format(name))
             a = AnonymizeScheme(name, cfg)
             a.create()
 

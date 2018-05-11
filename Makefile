@@ -1,5 +1,6 @@
 PIP=.venv/bin/pip
 PYTEST=.venv/bin/pytest
+PYTHON=.venv/bin/python
 
 test:clean
 	PYTHONPATH=anonymize ${PYTEST} -s -v tests/${path}
@@ -13,3 +14,6 @@ setup:venv
 
 clean:
 	find . -name "*.pyc" -exec rm -rf {} \;
+
+sample:
+	PYTHONPATH=anonymize ${PYTHON} anonymize/__init__.py

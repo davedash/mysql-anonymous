@@ -1,20 +1,18 @@
-from anonymize.anonymize import get_truncates
+from anonymize.anonymize import AnonymizeTruncate, AnonymizeScheme
 
 
 def test_should_get_the_empty_list():
-    truncates = get_truncates({})
+    truncates = AnonymizeTruncate(AnonymizeScheme("default", {}))
 
     assert truncates == []
 
 
 def test_should_get_the_list_of_truncate_tables():
-    truncates = get_truncates({
-        "database": {
-            "truncate": [
-                "user",
-                "subscribers"
-            ]
-        }
-    })
+    truncates = AnonymizeTruncate(AnonymizeScheme("default", {
+        "truncate": [
+            "user",
+            "subscribers"
+        ]
+    }))
 
     assert truncates == ['TRUNCATE `user`', 'TRUNCATE `subscribers`']
