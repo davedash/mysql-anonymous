@@ -2,6 +2,8 @@
 # This assumes an id on each field.
 import logging
 import random
+import yaml
+import sys
 
 
 log = logging.getLogger('anonymize')
@@ -95,10 +97,6 @@ def anonymize(config):
     print
 
 if __name__ == '__main__':
-
-    import yaml
-    import sys
-
     if len(sys.argv) > 1:
         files = sys.argv[1:]
     else:
