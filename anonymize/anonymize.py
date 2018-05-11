@@ -100,7 +100,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         files = sys.argv[1:]
     else:
-        files = ['anonymize.yml', ]
+        files = ['sample.yml', ]
 
     for f in files:
         print "--"
@@ -116,3 +116,27 @@ if __name__ == '__main__':
             for name, sub_cfg in databases.items():
                 print "USE `%s`;" % name
                 anonymize({'database': sub_cfg})
+
+
+class AnonymizeScheme(object):
+    pass
+
+
+class AnonymizeSchemes(object):
+
+    def __init__(self, cfg):
+        self._cfg = cfg
+        self._print_use = False
+
+    def build(self):
+        for name, cfg in self._databases().items():
+            if self._print_use:
+                print "USE `{}`;".format(name)
+            a = AnonymizeScheme(name, cfg)
+            a.create()
+
+    def _databases(self):
+        if "databases" in self._cfg:
+            self._print_use = True
+            return self._cfg.get("databases")
+        return {"default": self._cfg.get("database")}
