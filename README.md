@@ -1,5 +1,7 @@
 ## Mysql Anonymous
 
+[![Build Status](https://travis-ci.org/riquellopes/mysql-anonymous.svg?branch=master)](https://travis-ci.org/riquellopes/mysql-anonymous)
+
 Contributors can benefit from having real data when they are
 developing.  This script can do a few things (see `anonymize.yml`):
 
