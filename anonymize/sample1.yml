@@ -52,6 +52,7 @@ database:
         - versioncomments
     tables:
         addons:
+            primary_key: 1
             nullify: [nominationmessage, paypal_id, charity_id]
             random_int:
                 - average_daily_downloads

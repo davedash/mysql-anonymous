@@ -42,6 +42,8 @@ class AnonymizeUpdate(AnonymizeBaseAction):
 
         for table, data in self._scheme.tables.iteritems():
             updates = []
+            primary_key = data.pop('primary_key', "id")
+
             for operation, details in data.iteritems():
 
                 # tables columns
@@ -56,10 +58,10 @@ class AnonymizeUpdate(AnonymizeBaseAction):
                         updates.append("`%s` = INET_NTOA(RAND()*1000000000)" % field)
                 elif operation == 'random_email':
                     for field in listify(details):
-                        updates.append("`%s` = CONCAT(id, '@example.com')" % field)
+                        updates.append("`{}` = CONCAT({}, '@example.com')".format(field, primary_key))
                 elif operation == 'random_username':
                     for field in listify(details):
-                        updates.append("`%s` = CONCAT('_user_', id)" % field)
+                        updates.append("`{}` = CONCAT('_user_', {})".format(field, primary_key))
                 elif operation == 'hash_value':
                     for field in listify(details):
                         updates.append("`%(field)s` = MD5(CONCAT(@common_hash_secret, `%(field)s`))"
