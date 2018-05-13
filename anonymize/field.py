@@ -33,6 +33,18 @@ class RandomUsername(Field):
     sql_field = "`{field}` = CONCAT('_user_', {primary_key})"
 
 
+class RandomCellPhone(Field):
+    sql_field = "`{field}` = LPAD({primary_key}, 13, 5)"
+
+
+class RandomPhone(Field):
+    sql_field = "`{field}` = LPAD({primary_key}, 12, 5)"
+
+
+class RandomCpf(Field):
+    sql_field = "`{field}` = LPAD({primary_key}, 11, 5)"
+
+
 class HashValue(Field):
     sql_field = "`{field}` = MD5(CONCAT(@common_hash_secret, `{field}`))"
 
@@ -53,6 +65,9 @@ class AnonymizeField(object):
             "random_ip": RandomIp,
             "random_email": RandomEmail,
             "random_username": RandomUsername,
+            "random_cell_phone": RandomCellPhone,
+            "random_phone": RandomPhone,
+            "random_cpf": RandomCpf,
             "hash_value": HashValue,
             "hash_email": HashEmail,
         }

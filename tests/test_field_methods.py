@@ -1,5 +1,6 @@
 import pytest
-from anonymize.field import AnonymizeField, Nullify
+from anonymize.field import (
+    AnonymizeField, Nullify, RandomCellPhone, RandomPhone, RandomCpf)
 
 
 @pytest.fixture
@@ -29,3 +30,21 @@ def test_should_get_true_for_delete_operations(anon):
 
 def test_should_get_Nullify_instance(anon):
     assert isinstance(anon.get_field("nullify", "id"), Nullify)
+
+
+def test_should_get_RandomCellPhone_instance(anon):
+    cell_phone = anon.get_field("random_cell_phone", "id")
+    assert isinstance(cell_phone, RandomCellPhone)
+    assert cell_phone.render() == "`id` = LPAD(id, 13, 5)"
+
+
+def test_should_get_RandomPhone_instance(anon):
+    phone = anon.get_field("random_phone", "id")
+    assert isinstance(phone, RandomPhone)
+    assert phone.render() == "`id` = LPAD(id, 12, 5)"
+
+
+def test_should_get_RandomCpf_instance(anon):
+    cpf = anon.get_field("random_cpf", "id")
+    assert isinstance(cpf, RandomCpf)
+    assert cpf.render() == "`id` = LPAD(id, 11, 5)"

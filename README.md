@@ -10,6 +10,9 @@ developing.  This script can do a few things (see `anonymize.yml`):
 * Fill in random/arbitrary data:
     * Random integers
     * Random IP addresses
+    * Random Cell Phone
+    * Random Phone
+    * Random [CPF](https://pt.wikipedia.org/wiki/Cadastro_de_pessoas_f%C3%ADsicas)
     * Email addresses
     * Usernames
 * Delete rows based on simple rules:  e.g.
