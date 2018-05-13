@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 import os
 import yaml
+import logging
 from optparse import OptionParser
 from anonymize import AnonymizeSchemes
+
+logging.basicConfig(
+    filename='anonymize.log',
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.DEBUG)
 
 
 class Anonymize(object):
