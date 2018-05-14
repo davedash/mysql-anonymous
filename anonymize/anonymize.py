@@ -37,13 +37,25 @@ class AnonymizeUpdate(AnonymizeBaseAction):
 
         for table, data in self._scheme.tables.iteritems():
             updates = []
-            anon = AnonymizeField(data, data.pop('primary_key', "id"))
+            primary_key, exception = data.pop('primary_key', "id"), data.pop('exception', [])
+            anon = AnonymizeField(data, primary_key)
 
             for n in anon.build():
                 updates.append(n.render())
 
             if updates:
-                self.append('UPDATE `%s` SET %s' % (table, ', '.join(updates)))
+                self.append(
+                    'UPDATE `{}` SET {}{}'.format(
+                        table,
+                        ', '.join(updates),
+                        self._sql_exception(primary_key, exception)))
+
+    def _sql_exception(self, primary_key, exception):
+        where = ""
+        if exception:
+            where = " WHERE {primary_key} NOT IN({ids})".format(
+                primary_key=primary_key, ids=", ".join(map(str, exception)))
+        return where
 
 
 class AnonymizeScheme(object):

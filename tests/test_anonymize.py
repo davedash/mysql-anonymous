@@ -29,3 +29,4 @@ def test_should_get_trucate_at_output(sample, stdout):
 
     sys.stdout, result = stdout
     assert "TRUNCATE `stats_collections_counts`;" in result.getvalue()
+    assert " WHERE id NOT IN(556, 889)" in result.getvalue()

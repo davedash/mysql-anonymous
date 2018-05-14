@@ -21,8 +21,20 @@ developing.  This script can do a few things (see `anonymize.yml`):
     database:
         tables:
             mytable:
-                delete:
+                nullify:
                     private: Yes
+
+* Apply rules exception in some cases: e.g.
+  ``UPDATE mytable SET cellphone=NULL WHERE id NOT IN(556, 889)``:
+
+  database:
+      tables:
+          mytable:
+              exception:
+               - 556
+               - 889
+              nullify:
+               - cellphone
 
 #### Installation
 ```sh
