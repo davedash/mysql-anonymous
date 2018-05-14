@@ -38,5 +38,7 @@ setup(
     description=__doc__,
     long_description=__doc__,
     py_modules=["anonymize"],
+    package_data={'': ['sample1.yml', 'sample2.yml']},
+    include_package_data=True,
     **setup_params
 )
