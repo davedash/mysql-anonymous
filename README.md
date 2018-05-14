@@ -24,7 +24,13 @@ developing.  This script can do a few things (see `anonymize.yml`):
                 delete:
                     private: Yes
 
-### Usage
-
-    python anonymize.py > anon.sql
-    cat anon.sql | mysql
+#### Installation
+```sh
+pip install https://github.com/riquellopes/mysql-anonymous/tarball/master
+```
+### CookBook
+```sh
+    anonymize --sample-one
+    anonymize --sample-two
+    anonymize -y database.yml
+```
