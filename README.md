@@ -18,18 +18,18 @@ developing.  This script can do a few things (see `anonymize.yml`):
 * Delete rows based on simple rules:  e.g.
   ``DELETE FROM mytable WHERE private = "Yes"``:
 
-   '''yml
+   ```yml
     database:
         tables:
             mytable:
                 nullify:
                     private: Yes
-    '''
+    ```
 
 * Apply rules exception in some cases: e.g.
   ``UPDATE mytable SET cellphone=NULL WHERE id NOT IN(556, 889)``:
 
-  '''yml
+  ```yml
   database:
       tables:
           mytable:
@@ -38,7 +38,7 @@ developing.  This script can do a few things (see `anonymize.yml`):
                - 889
               nullify:
                - cellphone
-  '''
+  ```
 
 #### Installation
 ```sh
