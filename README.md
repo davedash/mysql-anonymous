@@ -40,11 +40,13 @@ developing.  This script can do a few things (see `sample1.yml` or 'sample2.yml'
                - cellphone
   ```
 
-#### Installation
+Installation
+------------
 ```sh
 pip install https://github.com/riquellopes/mysql-anonymous/tarball/master
 ```
-### CookBook
+CookBook
+--------
 ```sh
     anonymize --sample-one
     anonymize --sample-two
