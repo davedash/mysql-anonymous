@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/riquellopes/mysql-anonymous.svg?branch=master)](https://travis-ci.org/riquellopes/mysql-anonymous)
 
 Contributors can benefit from having real data when they are
-developing.  This script can do a few things (see `sample1.yml` or 'sample2.yml'):
+developing.  This script can do a few things (see `sample1.yml` or `sample2.yml`):
 
 * Truncate any tables (logs, and other cruft which may have sensitive data)
 * Nullify fields (emails, passwords, etc)
@@ -38,6 +38,17 @@ developing.  This script can do a few things (see `sample1.yml` or 'sample2.yml'
                - 889
               nullify:
                - cellphone
+  ```
+
+* Define an other name for primary key of table: e.g.
+  ``UPDATE mytable SET `email` = CONCAT(user_id, '@example.com')``:
+
+  ```yml
+  database:
+      tables:
+          primary_key: user_id
+          mytable:
+              random_email: email
   ```
 
 Installation
