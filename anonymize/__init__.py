@@ -31,10 +31,10 @@ class Anonymize(object):
     @property
     def file_name(self):
         if self.is_sample():
-            BASE_DIR = os.path.dirname(os.path.dirname(
-                os.path.dirname(os.path.dirname(__file__))))
             return os.path.join(
-                BASE_DIR, 'anonymize', "sample{}.yml".format(self._sample))
+                os.path.dirname(os.path.dirname(__file__)),
+                'anonymize',
+                "sample{}.yml".format(self._sample))
         return self._file_name
 
     def is_sample(self):
