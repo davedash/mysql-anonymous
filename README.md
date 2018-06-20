@@ -13,6 +13,7 @@ developing.  This script can do a few things (see `sample1.yml` or `sample2.yml`
     * Random Cell Phone
     * Random Phone
     * Random [CPF](https://pt.wikipedia.org/wiki/Cadastro_de_pessoas_f%C3%ADsicas)
+    * Random [CNPJ](https://pt.wikipedia.org/wiki/Cadastro_Nacional_da_Pessoa_Jur%C3%ADdica)
     * Email addresses
     * Usernames
 * Delete rows based on simple rules:  e.g.
