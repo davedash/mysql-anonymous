@@ -1,6 +1,6 @@
 import pytest
 from anonymize.field import (
-    AnonymizeField, Nullify, RandomCellPhone, RandomPhone, RandomCpf)
+    AnonymizeField, Nullify, RandomCellPhone, RandomPhone, RandomCpf, RandomCnpj)
 
 
 @pytest.fixture
@@ -48,3 +48,8 @@ def test_should_get_RandomCpf_instance(anon):
     cpf = anon.get_field("random_cpf", "id")
     assert isinstance(cpf, RandomCpf)
     assert cpf.render() == "`id` = LPAD(id, 11, 5)"
+
+def test_should_get_RandomCnpj_instance(anon):
+    cnpj = anon.get_field("random_cnpj", "cnpj")
+    assert isinstance(cnpj, RandomCnpj)
+    assert cnpj.render() == "`cnpj` = LPAD(id, 14, 5)"
