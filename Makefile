@@ -3,7 +3,7 @@ PYTEST=.venv/bin/pytest
 PYTHON=.venv/bin/python
 
 test:clean
-	PYTHONPATH=anonymize ${PYTEST} -s -v --cov=anonymize tests/${path}
+	PYTHONPATH=anonymize ${PYTEST} -s -v --cov=anonymize --cov-report term-missing tests/${path}
 
 venv:
 	virtualenv .venv
