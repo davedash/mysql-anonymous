@@ -9,3 +9,6 @@ install: "make setup"
 
 script:
   - make test
+
+after_sucess:
+  - coveralls
