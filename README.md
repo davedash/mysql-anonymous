@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/riquellopes/mysql-anonymous.svg?branch=master)](https://travis-ci.org/riquellopes/mysql-anonymous)
 
+[![Coverage Status](https://coveralls.io/repos/github/riquellopes/mysql-anonymous/badge.svg?branch=master)](https://coveralls.io/github/riquellopes/mysql-anonymous?branch=master)
+
 Contributors can benefit from having real data when they are
 developing.  This script can do a few things (see `sample1.yml` or `sample2.yml`):
 
