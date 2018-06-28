@@ -11,4 +11,4 @@ script:
   - make test
 
 after_sucess:
-  - coveralls
+  - make coveralls

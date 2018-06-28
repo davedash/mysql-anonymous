@@ -1,6 +1,8 @@
 PIP=.venv/bin/pip
 PYTEST=.venv/bin/pytest
 PYTHON=.venv/bin/python
+COVERALLS=coveralls
+
 
 test:clean
 	PYTHONPATH=anonymize ${PYTEST} -s -v --cov=anonymize --cov-report term-missing tests/${path}
@@ -17,3 +19,6 @@ clean:
 
 sample:
 	PYTHONPATH=anonymize ${PYTHON} anonymize/__init__.py
+
+coveralls:
+	${COVERALLS}
