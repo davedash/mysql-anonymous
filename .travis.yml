@@ -7,8 +7,7 @@ python:
 
 install: "make setup"
 
-script:
-  - make test
+script: "make test"
 
 after_sucess:
   - make coveralls
