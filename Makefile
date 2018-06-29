@@ -1,7 +1,7 @@
 PIP=.venv/bin/pip
 PYTEST=.venv/bin/pytest
 PYTHON=.venv/bin/python
-COVERALLS=coveralls
+COVERALLS=.venv/bin/coveralls
 
 
 test:clean
