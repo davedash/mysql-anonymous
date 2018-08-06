@@ -4,10 +4,8 @@ import logging
 import hashlib
 import random
 
-
 log = logging.getLogger('anonymize')
 common_hash_secret = "%016x" % (random.getrandbits(128))
-
 
 def get_truncates(config):
     database = config.get('database', {})
@@ -17,6 +15,11 @@ def get_truncates(config):
         sql.append('TRUNCATE `%s`' % truncate)
     return sql
 
+def get_count_digit_phone(number):
+    phoneFormat = '1';
+    for i in range(number - 1):
+        phoneFormat+='0'
+    return int(phoneFormat)
 
 def get_deletes(config):
     database = config.get('database', {})
@@ -58,6 +61,9 @@ def get_updates(config):
             elif operation == 'random_username':
                 for field in listify(details):
                     updates.append("`%s` = CONCAT('_user_', id)" % field)
+            elif operation == 'random_phone':
+                number = get_count_digit_phone(details[1])
+                updates.append("`%s` =CONCAT('%s', FLOOR('%s' + RAND() * '%s'))" %(details[0], details[2] if len(details) == 3 else '', number, (number*10-number-1)))
             elif operation == 'hash_value':
                 for field in listify(details):
                     updates.append("`%(field)s` = MD5(CONCAT(@common_hash_secret, `%(field)s`))"

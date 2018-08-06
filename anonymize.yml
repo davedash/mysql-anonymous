@@ -90,5 +90,6 @@ database:
                 - last_login_attempt_ip
                 - failed_login_attempts
             random_username: [username, nickname]
+            random_phone: [phone, 9, '+33']
         versions:
             nullify: approvalnotes
