@@ -4,7 +4,7 @@ import logging
 import hashlib
 import random
 
-
+logging.basicConfig()
 log = logging.getLogger('anonymize')
 common_hash_secret = "%016x" % (random.getrandbits(128))
 
@@ -39,12 +39,63 @@ def get_updates(config):
     database = config.get('database', {})
     tables = database.get('tables', [])
     sql = []
+    random_types = {}
+    random_types['alpha'] = 'abcedefghijklmnopqrstuvwyz'
+    random_types['alphanum'] = 'abcedefghijklmnopqrstuvwyz0123456789'
+    random_types['ALPHA'] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    random_types['ALPHAnum'] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    random_types['ALpha'] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcedefghijklmnopqrstuvwyz'
+    random_types['ALphanum'] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcedefghijklmnopqrstuvwyz0123456789'
     for table, data in tables.iteritems():
+        # pk
+        field_pk = None
+        for operation, details in data.iteritems():
+            if operation == 'pk':
+                for field in listify(details):
+                    field_pk = field
+        # set var
+        var_sql = {}
+        for operation, details in data.iteritems():
+            result = operation.split('_')
+            if len(result) == 3 and result[0] == 'set' and result[1] == 'var':
+                name_var = result[2]
+                for value in listify(details):
+                    var_sql[name_var] = value
+        # operations
         updates = []
         for operation, details in data.iteritems():
-            if operation == 'nullify':
+            result = operation.split('_')
+            if len(result) == 3 and result[0] == 'use' and result[1] == 'var':
+                var_name = result[2]
+                for field in listify(details):
+                    updates.append("`%s` = '%s'" % (field, var_sql[var_name]))
+            elif len(result) == 2 and result[0] == 'md5':
+                var_length = result[1]
+                for field in listify(details):
+                    updates.append(
+                        "`%s` = SUBSTR(MD5(CONCAT(@common_hash_secret, %s)),1,%s)" % (field, field_pk, var_length))
+            elif len(result) == 3 and result[0] == 'random':
+                var_type = result[1]
+                var_length = int(result[2])
+                for field in listify(details):
+                    part_sql = '`%s` = CONCAT('
+                    for x in range(0, var_length):
+                        part_sql = part_sql + ("SUBSTRING('%s', rand()*%s+1, 1)" % (
+                        random_types[var_type], len(random_types[var_type])))
+                        if x < (var_length - 1):
+                            part_sql = part_sql + ','
+                    part_sql = part_sql + ')'
+                    updates.append(part_sql % field)
+            elif len(result) == 3 and result[0] == 'set' and result[1] == 'var':
+                continue
+            elif operation == 'pk':
+                continue
+            elif operation == 'nullify':
                 for field in listify(details):
                     updates.append("`%s` = NULL" % field)
+            elif operation == 'anonymize':
+                for field in listify(details):
+                    updates.append("`%s` = CONCAT('_%s_', %s)" % (field, field, field_pk))
             elif operation == 'random_int':
                 for field in listify(details):
                     updates.append("`%s` = ROUND(RAND()*1000000)" % field)
@@ -93,6 +144,7 @@ def anonymize(config):
     print "SET FOREIGN_KEY_CHECKS=1;"
     print
 
+
 if __name__ == '__main__':
 
     import yaml
@@ -101,7 +153,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         files = sys.argv[1:]
     else:
-        files = [ 'anonymize.yml' ]
+        files = ['anonymize.yml']
 
     for f in files:
         print "--"
