@@ -49,6 +49,7 @@ def test_should_get_RandomCpf_instance(anon):
     assert isinstance(cpf, RandomCpf)
     assert cpf.render() == "`id` = LPAD(id, 11, 5)"
 
+
 def test_should_get_RandomCnpj_instance(anon):
     cnpj = anon.get_field("random_cnpj", "cnpj")
     assert isinstance(cnpj, RandomCnpj)
