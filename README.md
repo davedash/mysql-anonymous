@@ -18,6 +18,8 @@ developing.  This script can do a few things (see `sample1.yml` or `sample2.yml`
     * Random [CNPJ](https://pt.wikipedia.org/wiki/Cadastro_Nacional_da_Pessoa_Jur%C3%ADdica)
     * Email addresses
     * Usernames
+    * Text [Loren Ipsum](https://www.lipsum.com/)
+  
 * Delete rows based on simple rules:  e.g.
   ``DELETE FROM mytable WHERE private = "Yes"``:
 
