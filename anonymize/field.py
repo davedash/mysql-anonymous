@@ -44,6 +44,7 @@ class RandomPhone(Field):
 class RandomCpf(Field):
     sql_field = "`{field}` = LPAD({primary_key}, 11, 5)"
 
+
 class RandomCnpj(Field):
     sql_field = "`{field}` = LPAD({primary_key}, 14, 5)"
 
