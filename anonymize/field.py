@@ -1,3 +1,4 @@
+# coding: utf-8
 import logging
 logger = logging.getLogger('anonymize')
 
@@ -57,6 +58,10 @@ class HashEmail(Field):
     sql_field = "`{field}` = CONCAT(MD5(CONCAT(@common_hash_secret, `{field}`)), '@example.com')"
 
 
+class LoremIpsum(Field):
+    sql_field = """`{field}` = `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum`"""
+
+
 class AnonymizeField(object):
 
     def __init__(self, data, primary_key):
@@ -75,6 +80,7 @@ class AnonymizeField(object):
             "random_cnpj": RandomCnpj,
             "hash_value": HashValue,
             "hash_email": HashEmail,
+            'text_lorem_ipsum': LoremIpsum
         }
 
     def build(self):
