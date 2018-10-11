@@ -84,7 +84,7 @@ class AnonymizeField(object):
         }
 
     def build(self):
-        for operation, details in self._data.iteritems():
+        for operation, details in self._data.items():
             if self._valid_operation(operation):
                 for field in self._listify(details):
                     yield self.get_field(operation, field)

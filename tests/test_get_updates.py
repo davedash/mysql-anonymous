@@ -7,12 +7,12 @@ def test_should_get_the_update_list():
             "user": {
                 "nullify": ["phone", ],
                 "random_email": ["email", ],
-                "random_ip": ['ip']
+                "random_ip": ['ip', ]
             }
         }
     }))
 
-    r = ["UPDATE `user` SET `phone` = NULL, `ip` = INET_NTOA(RAND()*1000000000), `email` = CONCAT(id, '@example.com')"]
+    r = ["UPDATE `user` SET `phone` = NULL, `email` = CONCAT(id, '@example.com'), `ip` = INET_NTOA(RAND()*1000000000)"]
     assert data == r
 
 
