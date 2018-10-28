@@ -1,6 +1,6 @@
 import pytest
 from anonymize.field import (
-    AnonymizeField, Nullify, RandomCellPhone, RandomPhone, RandomCpf, RandomCnpj)
+    AnonymizeField, Nullify, RandomCellPhone, RandomPhone, RandomCpf, RandomCnpj, LoremIpsum)
 
 
 @pytest.fixture
@@ -54,3 +54,9 @@ def test_should_get_RandomCnpj_instance(anon):
     cnpj = anon.get_field("random_cnpj", "cnpj")
     assert isinstance(cnpj, RandomCnpj)
     assert cnpj.render() == "`cnpj` = LPAD(id, 14, 5)"
+
+
+def test_should_get_LoremIpsum_instance(anon):
+    lipsum = anon.get_field("text_lorem_ipsum", "text")
+    assert isinstance(lipsum, LoremIpsum)
+    assert "Lorem Ipsum" in lipsum.render()

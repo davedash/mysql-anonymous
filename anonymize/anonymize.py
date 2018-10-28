@@ -2,6 +2,8 @@ from __future__ import print_function
 import itertools
 import random
 from field import AnonymizeField
+from collections import OrderedDict
+
 
 common_hash_secret = "%016x" % (random.getrandbits(128))
 
@@ -23,10 +25,10 @@ class AnonymizeTruncate(AnonymizeBaseAction):
 class AnonymizeDelete(AnonymizeBaseAction):
 
     def create(self):
-        for table, data in self._scheme.tables.iteritems():
+        for table, data in self._scheme.tables.items():
             if 'delete' in data:
                 self.append('DELETE FROM `{}` WHERE '.format(table) + ' AND '.join(
-                    ['`{}` = "{}"'.format(f, v) for f, v in data['delete'].iteritems()]
+                    ['`{}` = "{}"'.format(f, v) for f, v in data['delete'].items()]
                 ))
 
 
@@ -35,9 +37,11 @@ class AnonymizeUpdate(AnonymizeBaseAction):
     def create(self):
         global common_hash_secret
 
-        for table, data in self._scheme.tables.iteritems():
+        for table, data in self._scheme.tables.items():
             updates = []
             primary_key, exception = data.pop('primary_key', "id"), data.pop('exception', [])
+            data = OrderedDict(sorted(data.items(), key=lambda t: t[0]))
+
             anon = AnonymizeField(data, primary_key)
 
             for n in anon.build():
