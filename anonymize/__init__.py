@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 import os
 import yaml
 import logging
 from optparse import OptionParser
-from anonymize import AnonymizeSchemes
+from .anonymize import AnonymizeSchemes
 
 logging.basicConfig(
     filename='anonymize.log',
