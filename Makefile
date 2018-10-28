@@ -1,3 +1,4 @@
+.SILENT:
 PIP=.venv/bin/pip
 PYTEST=.venv/bin/pytest
 PYTHON=.venv/bin/python
