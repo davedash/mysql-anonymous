@@ -1,1 +1,1 @@
-PyYAML==3.12  # rq.filter: !=3.13
+PyYAML==3.12
