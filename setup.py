@@ -37,7 +37,7 @@ setup(
     platforms=['python >= 2.7'],
     description=__doc__,
     long_description=__doc__,
-    install_requires=["pyyaml"],
+    install_requires=["PyYAML==4.2b2"],
     py_modules=["anonymize"],
     package_data={'': ['sample1.yml', 'sample2.yml']},
     include_package_data=True,
