@@ -73,7 +73,7 @@ def get_updates(config):
             elif operation == 'random_cpf':
                 for field in listify(details):
                     cpf = generate_cpf()
-                    updates.append("`%(field)s` = '%(cpf)s') " % dict(field=field, cpf=cpf))
+                    updates.append("`%(field)s` = '%(cpf)s' " % dict(field=field, cpf=cpf))
             elif operation == 'delete':
                 continue
             else:
