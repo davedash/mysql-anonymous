@@ -9,7 +9,7 @@ test:clean
 	PYTHONPATH=anonymize ${PYTEST} -s -v --cov=anonymize --cov-report term-missing tests/${path}
 
 venv:
-	virtualenv .venv
+	virtualenv .venv --python=python3
 
 setup:venv
 	${PIP} install -U pip
