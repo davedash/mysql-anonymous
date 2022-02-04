@@ -2,8 +2,8 @@
 # coding: utf-8
 from __future__ import print_function, absolute_import
 import os
-import yaml
 import logging
+from yaml import Loader, load
 from optparse import OptionParser
 from .anonymize import AnonymizeSchemes
 
@@ -25,7 +25,7 @@ class Anonymize(object):
     def run(self):
         if self._run:
             with open(self.file_name) as handle:
-                a = AnonymizeSchemes(yaml.load(handle))
+                a = AnonymizeSchemes(load(handle, Loader=Loader))
                 a.build()
 
     @property
