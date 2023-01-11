@@ -52,6 +52,9 @@ database:
         - versioncomments
     tables:
         addons:
+            exception:
+                - 556
+                - 889
             nullify: [nominationmessage, paypal_id, charity_id]
             random_int:
                 - average_daily_downloads
